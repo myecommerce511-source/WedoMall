@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin – Sen Shop</title>
+<style>
+body {font-family:Arial,sans-serif; margin:0; padding:20px; background:#f5f5f5;}
+h1 {color:#111;}
+input, select {padding:8px; margin:5px 0; width:100%; border-radius:5px; border:1px solid #ccc;}
+button {padding:10px 15px; margin-top:10px; background:#28a745; color:#fff; border:none; border-radius:5px; cursor:pointer;}
+.product-item {background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,.1);}
+</style>
+</head>
+<body>
+
+<h1>Admin – Sen Shop</h1>
+
+<h2>Ajouter un produit</h2>
+<input type="text" id="nom" placeholder="Nom du produit">
+<input type="number" id="prix" placeholder="Prix en FCFA">
+<select id="categorie">
+  <option value="electronique">Électronique</option>
+  <option value="electromenager">Électroménager</option>
+  <option value="beaute">Beauté & Cosmétiques</option>
+</select>
+<input type="text" id="img" placeholder="Lien image du produit">
+<button onclick="ajouterProduit()">Ajouter produit</button>
+
+<h2>Liste des produits</h2>
+<div id="listeProduits"></div>
+
+<script>
+let produits = JSON.parse(localStorage.getItem('produits')) || [];
+
+function afficherProduits() {
+  const div = document.getElementById('listeProduits');
+  div.innerHTML = '';
+  produits.forEach((p, index) => {
+    div.innerHTML += `
+      <div class="product-item">
+        <b>${p.nom}</b> - ${p.prix} FCFA - ${p.cat}
+        <br><img src="${p.img}" width="100">
+        <br>
+        <button onclick="supprimerProduit(${index})" style="background:#ff4d4d;">Supprimer</button>
+      </div>
+    `;
+  });
+}
+
+function ajouterProduit() {
+  const nom = document.getElementById('nom').value;
+  const prix = document.getElementById('prix').value;
+  const cat = document.getElementById('categorie').value;
+  const img = document.getElementById('img').value;
+
+  if(!nom || !prix || !img) {
+    alert("Remplissez tous les champs !");
+    return;
+  }
+
+  produits.push({nom, prix:Number(prix), cat, img});
+  localStorage.setItem('produits', JSON.stringify(produits));
+  afficherProduits();
+  document.getElementById('nom').value='';
+  document.getElementById('prix').value='';
+  document.getElementById('img').value='';
+}
+
+function supprimerProduit(index) {
+  if(confirm("Supprimer ce produit ?")) {
+    produits.splice(index,1);
+    localStorage.setItem('produits', JSON.stringify(produits));
+    afficherProduits();
+  }
+}
+
+// Affichage initial
+afficherProduits();
+</script>
+
+</body>
+</html>
